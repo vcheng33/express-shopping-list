@@ -1,7 +1,8 @@
 /** Routes for sample app. */
 
 const express = require("express");
-const { NotFoundError } = require("./expressError");
+const { NotFoundError, BadRequestError } = require("./expressError");
+const { isValidNum } = require("./utils");
 
 const db = require("./fakeDb");
 const router = new express.Router();
@@ -61,6 +62,9 @@ router.get("/:name", function (req, res, next) {
 /** PATCH /items/:name: update name or 404. */
 
 router.patch("/:name", function (req, res, next) {
+    if (isNaN(Number(req.body.price))) {
+        throw new BadRequestError();
+    } 
     const name = req.params.name;
     for (let item of db.items){
         if(item.name === name){
@@ -70,6 +74,17 @@ router.patch("/:name", function (req, res, next) {
         }
     }
     throw new NotFoundError();
-  });
+});
+
+router.delete("/:name", function (req, res, next) {
+    const name = req.params.name;
+    for (let item of db.items){
+        if(item.name === name){
+            items.delete(item);
+            return res.json({message: "Deleted"});
+        }
+    }
+    throw new NotFoundError();
+});
 
 module.exports = router;
