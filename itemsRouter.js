@@ -1,22 +1,12 @@
+"use strict";
 /** Routes for sample app. */
 
 const express = require("express");
 const { NotFoundError, BadRequestError } = require("./expressError");
-const { isValidNum } = require("./utils");
+// const { isValidNum } = require("./utils");
 
 const db = require("./fakeDb");
 const router = new express.Router();
-
-// /** GET /users: get list of users */
-// router.get("/", function (req, res, next) {
-//     return res.json(db.User.all());
-// });
-
-// /** DELETE /users/[id]: delete user, return {message: Deleted} */
-// router.delete("/:id", function (req, res, next) {
-//     db.User.delete(req.params.id);
-//     return res.json({ message: "Deleted" });
-// });
 
 // ROUTES
 
@@ -32,6 +22,7 @@ router.get("/", function (req, res) {
 });
 
 router.post("/", function (req, res) {
+    // destructure
     const name = req.body.name;
     const price = req.body.price;
     const newItem = { name, price };
@@ -41,47 +32,51 @@ router.post("/", function (req, res) {
         .json({ "added": newItem });
 });
 
-router.get("/", function (req, res) {
-    const shoppingItems = db.items;
-    return res.json(shoppingItems);
-});
-
-/** GET /items/:name: returns name {cat} or 404. */
+/** GET /items/:name: returns json like
+ * {name: "popsicle", "price": "1.45"} or 404. */
 
 router.get("/:name", function (req, res, next) {
     const name = req.params.name;
-    for (let item of db.items){
-        if(item.name === name){
+    for (let item of db.items) {
+        if (item.name === name) {
             return res.json(item);
         }
     }
     throw new NotFoundError();
-  });
+});
 
 
-/** PATCH /items/:name: update name or 404. */
+/** PATCH /items/:name: update name and/or price. 
+ *  If price input is invalid, returns 400, otherwise
+ *  returns 404.
+*/
 
 router.patch("/:name", function (req, res, next) {
     if (isNaN(Number(req.body.price))) {
         throw new BadRequestError();
-    } 
+    }
     const name = req.params.name;
-    for (let item of db.items){
-        if(item.name === name){
+    for (let item of db.items) {
+        if (item.name === name) {
             item.name = req.body.name;
             item.price = req.body.price;
-            return res.json({updated: item});
+            return res.json({ updated: item });
         }
     }
     throw new NotFoundError();
 });
-
+// use .find() and .findIndex()
+/** delete item and returns {message: "Deleted"}
+ *  if successful. Otherwise, returns error.
+  */
 router.delete("/:name", function (req, res, next) {
     const name = req.params.name;
-    for (let item of db.items){
-        if(item.name === name){
-            items.delete(item);
-            return res.json({message: "Deleted"});
+    debugger;
+    for (let item of db.items) {
+        if (item.name === name) {
+            index = db.items.indexOf(item);
+            db.items.splice(index, 1);
+            return res.json({ message: "Deleted" });
         }
     }
     throw new NotFoundError();

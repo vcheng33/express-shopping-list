@@ -7,7 +7,7 @@ const app = express();
 const itemsRouter = require("./itemsRouter");
 
 const morgan = require("morgan");
-const db = require("./fakeDb");
+// const db = require("./fakeDb");
 
 
 app.use(express.json());
@@ -17,7 +17,7 @@ app.use(express.urlencoded( {extended: true }));
 app.use(morgan("dev"));
 
 
-//Rotues--------------------------
+// --------------------------Routes--------------------------
 
 app.use("/items", itemsRouter);
 
