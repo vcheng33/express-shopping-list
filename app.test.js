@@ -15,7 +15,7 @@ afterEach(function() {
 });
 
 /** GET /items - returns `{ items: [
-    { name: "pickle", price: 5.00 },
+    { name: "pickle", price: "5.00" },
     ]} ` */
 
 describe("GET /items", function() {
@@ -25,39 +25,43 @@ describe("GET /items", function() {
     expect(resp.body).toEqual([{ name: "pickle", price: "5.00" }]);
   });
 });
+
+
 // end
 
-// /** GET /cats/[name] - return data about one cat: `{cat: cat}` */
+/** GET /items/[name] - return data about one item: `{ name: "pickle", price: "5.00" }` */
 
-// describe("GET /cats/:name", function() {
-//   it("Gets a single cat", async function() {
-//     const resp = await request(app).get(`/cats/${pickles.name}`);
+describe("GET /items/:name", function() {
+  it("Gets a single item", async function() {
+    const resp = await request(app).get(`/items/pickle`);
 
-//     expect(resp.body).toEqual({ cat: pickles });
-//   });
+    expect(resp.body).toEqual({ name: "pickle", price: "5.00" });
+    expect(resp.statusCode).toEqual(200);
+  });
 
-//   it("Responds with 404 if can't find cat", async function() {
-//     const resp = await request(app).get(`/cats/not-here`);
-//     expect(resp.statusCode).toEqual(404);
-//   });
-// });
+  it("Responds with 404 if can't find cat", async function() {
+    const resp = await request(app).get(`/items/taco`);
+    expect(resp.statusCode).toEqual(404);
+  });
+});
 // // end
 
-// /** POST /cats - create cat from data; return `{cat: cat}` */
+/** POST /items - create item from data; return `{name: popsicle, price:"500"}` */
 
-// describe("POST /cats", function() {
-//   it("Creates a new cat", async function() {
-//     const resp = await request(app)
-//       .post(`/cats`)
-//       .send({
-//         name: "Ezra"
-//       });
-//     expect(resp.statusCode).toEqual(201);
-//     expect(resp.body).toEqual({
-//       cat: { name: "Ezra" }
-//     });
-//   });
-// });
+describe("POST /items", function() {
+  it("Creates a new item", async function() {
+    const resp = await request(app)
+      .post(`/items`)
+      .send({
+        name: "popsicle",
+        price: "500"
+      });
+    expect(resp.statusCode).toEqual(201);
+    expect(resp.body).toEqual({
+      added: { name: "popsicle", price: "500" }
+    });
+  });
+});
 // // end
 
 // /** PATCH /cats/[name] - update cat; return `{cat: cat}` */
